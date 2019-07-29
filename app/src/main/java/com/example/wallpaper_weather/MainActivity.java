@@ -3,6 +3,8 @@ package com.example.wallpaper_weather;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.WallpaperManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageView;
@@ -39,6 +41,9 @@ public class MainActivity extends AppCompatActivity {
         try {
             // Change the current system wallpaper
             myWallpaperManager.setResource(R.drawable.wallpaper);
+
+            Bitmap wallpaperbmap = BitmapFactory.decodeResource(getResources(), R.drawable.wallpaper);
+            myWallpaperManager.setBitmap(wallpaperbmap);
 
             // Show a toast message on successful change
             Toast.makeText(MainActivity.this,
