@@ -26,7 +26,6 @@
         android:id="@+id/simpleDigitalClock"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/textView2"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
