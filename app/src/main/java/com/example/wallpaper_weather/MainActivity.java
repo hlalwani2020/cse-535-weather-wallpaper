@@ -22,6 +22,7 @@ import java.io.StringReader;
 public class MainActivity extends AppCompatActivity {
     ImageButton androidThumbsUpButton;
     ImageButton androidThumbsDownButton;
+    ImageButton androidSettingsButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +41,13 @@ public class MainActivity extends AppCompatActivity {
         androidThumbsDownButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v2) {
+
+            }
+        });
+        androidSettingsButton = (ImageButton)findViewById(R.id.image_button_settings);
+        androidSettingsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v3) {
 
             }
         });
