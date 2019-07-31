@@ -9,6 +9,8 @@ import android.app.WallpaperManager;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -24,6 +26,8 @@ import org.xmlpull.v1.XmlPullParserFactory;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.List;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
     ImageButton androidThumbsUpButton;
@@ -147,6 +151,11 @@ public class MainActivity extends AppCompatActivity {
             }*/
 
             ((TextView) findViewById(R.id.cityTxtView)).setText(weather.location.getCity() + "," + weather.location.getCountry());
+            Address address = getAddressFromLocation(weather.location.getLatitude(), weather.location.getLongitude());
+            if (address != null)
+                ((TextView) findViewById(R.id.stateTxtView)).setText(address.getAdminArea());
+            else
+                ((TextView) findViewById(R.id.stateTxtView)).setText("Unidentified");
             ((TextView) findViewById(R.id.longTxtView)).setText("" + weather.location.getLongitude() + "°");
             ((TextView) findViewById(R.id.latTxtView)).setText("" + weather.location.getLatitude() + "°");
             ((TextView) findViewById(R.id.condTxtView)).setText(weather.currentCondition.getCondition() + "(" + weather.currentCondition.getDescr() + ")");
@@ -175,5 +184,18 @@ public class MainActivity extends AppCompatActivity {
             notificationManager.notify(NOTIFICATION_ID_WEATHER_RETRIEVED, builder.build());
         }
 
+        private Address getAddressFromLocation(final double latitude, final double longitude) {
+            Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
+            try {
+                List<Address> addressList = geocoder.getFromLocation(
+                        latitude, longitude, 1);
+                if (addressList != null && addressList.size() > 0) {
+                    return addressList.get(0);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
     }
 }
