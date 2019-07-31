@@ -9,18 +9,32 @@
 
     <TextView
         android:id="@+id/cityTxtView"
-        android:layout_width="92dp"
+        android:layout_width="200dp"
         android:layout_height="22dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
         android:gravity="right"
         android:text="Location"
+        android:textAlignment="textEnd"
         android:textSize="14sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="@string/location_textbox" />
+
+    <TextView
+        android:id="@+id/stateTxtView"
+        android:layout_width="92dp"
+        android:layout_height="22dp"
+        android:layout_marginTop="36dp"
+        android:layout_marginEnd="16dp"
+        android:gravity="right"
+        android:text="State"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="@string/state_textbox" />
 
     <DigitalClock
         android:id="@+id/simpleDigitalClock"
@@ -45,12 +59,11 @@
         android:layout_width="92dp"
         android:layout_height="23dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
         android:gravity="right"
         android:text="Latitude"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cityTxtView"
+        app:layout_constraintTop_toBottomOf="@+id/stateTxtView"
         tools:text="@string/latitude_textbox" />
 
     <TextView

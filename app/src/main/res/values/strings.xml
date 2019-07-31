@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">wallpaper-weather</string>
     <string name="location_textbox">Location</string>
+    <string name="state_textbox">State</string>
     <string name="latitude_textbox">Latitude</string>
     <string name="longitude_textbox">Longitude</string>
     <string name="temperature_textbox">Temperature</string>
