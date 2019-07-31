@@ -3,6 +3,7 @@ package com.example.wallpaper_weather;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.WallpaperManager;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -57,6 +58,11 @@ public class MainActivity extends AppCompatActivity {
         setWallpaper();
 		JSONWeatherTask task = new JSONWeatherTask();
         task.execute(new String[]{"lat=33.41&lon=-111.91"});
+    }
+
+    public void openPreferencesUI(View view) {
+        Intent intent = new Intent(this, preferencesActivity.class);
+        startActivity(intent);
     }
 
     public void setWallpaper() {
