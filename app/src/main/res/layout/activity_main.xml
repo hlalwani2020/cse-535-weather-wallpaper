@@ -130,34 +130,33 @@
 
     <ImageButton
         android:id="@+id/image_button_thumbsup"
-        android:layout_width="58dp"
-        android:layout_height="60dp"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="20dp"
+        android:background="@null"
         android:scaleType="fitXY"
         android:src="@drawable/thumb_up"
-        android:background="@null"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/thumb_up" />
 
     <ImageButton
         android:id="@+id/image_button_thumbsdown"
-        android:layout_width="58dp"
-        android:layout_height="60dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_marginTop="20dp"
+        android:background="@null"
         android:scaleType="fitXY"
         android:src="@drawable/thumbs_down"
-        android:background="@null"
         app:layout_constraintStart_toEndOf="@+id/image_button_thumbsup"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/thumbs_down" />
 
     <ImageButton
         android:id="@+id/image_button_settings"
-        android:layout_width="61dp"
-        android:layout_height="55dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
         android:background="@null"
