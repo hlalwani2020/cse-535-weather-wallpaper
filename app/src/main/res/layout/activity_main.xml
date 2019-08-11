@@ -59,9 +59,10 @@
         android:textSize="75sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintHorizontal_bias="0.492"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/textview_date"
+        app:layout_constraintVertical_bias="0.0" />
 
     <TextView
         android:id="@+id/latTxtView"
@@ -136,10 +137,10 @@
         android:layout_marginTop="20dp"
         android:background="@null"
         android:scaleType="fitXY"
-        android:src="@drawable/thumb_up"
+        android:src="@drawable/thumbs_up2"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/thumb_up" />
+        app:srcCompat="@drawable/thumbs_up2" />
 
     <ImageButton
         android:id="@+id/image_button_thumbsdown"
@@ -148,10 +149,10 @@
         android:layout_marginTop="20dp"
         android:background="@null"
         android:scaleType="fitXY"
-        android:src="@drawable/thumbs_down"
+        android:src="@drawable/thumbs_down2"
         app:layout_constraintStart_toEndOf="@+id/image_button_thumbsup"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/thumbs_down" />
+        app:srcCompat="@drawable/thumbs_down2" />
 
     <ImageButton
         android:id="@+id/image_button_settings"
@@ -161,9 +162,19 @@
         android:layout_marginBottom="16dp"
         android:background="@null"
         android:scaleType="fitXY"
-        android:src="@drawable/settings"
+        android:src="@drawable/settings4"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/settings" />
+        app:srcCompat="@drawable/settings4" />
+
+    <TextView
+        android:id="@+id/textview_date"
+        android:layout_width="235dp"
+        android:layout_height="19dp"
+        android:layout_marginTop="224dp"
+        android:text="TextView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
