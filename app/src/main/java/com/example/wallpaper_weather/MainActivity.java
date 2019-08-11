@@ -149,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "1")
-                .setSmallIcon(R.drawable.thumb_up)
+                .setSmallIcon(R.drawable.thumbs_up2)
                 .setContentTitle("New Wallpaper Set!")
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setContentIntent(pendingIntent)
@@ -209,7 +209,7 @@ public class MainActivity extends AppCompatActivity {
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             PendingIntent pendingIntent = PendingIntent.getActivity(MainActivity.this, 0, intent, 0);
             NotificationCompat.Builder builder = new NotificationCompat.Builder(MainActivity.this, "1")
-                    .setSmallIcon(R.drawable.thumb_up)
+                    .setSmallIcon(R.drawable.thumbs_up2)
                     .setContentTitle("Weather Retrieved!")
                     .setContentText("Wohoo! Weather is here")
                     .setPriority(NotificationCompat.PRIORITY_DEFAULT)
