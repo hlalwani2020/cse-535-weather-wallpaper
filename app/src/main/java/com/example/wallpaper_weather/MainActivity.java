@@ -106,10 +106,7 @@ public class MainActivity extends AppCompatActivity {
             requestPermissions(permissions, PERMESSION_WALLPAPER_CODE);
         }
 
-        JSONWeatherTask task = new JSONWeatherTask();
-        task.execute(new String[]{"lat=33.423204&lon=-111.939320"});
-
-        /*timer = new Timer("WeatherTimer");
+        timer = new Timer("WeatherTimer");
         TimerTask timerTask = new TimerTask() {
             @Override
             public void run() {
@@ -117,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
                 task.execute(new String[]{"lat=33.423204&lon=-111.939320"});
             }
         };
-        timer.schedule(timerTask, 0, 5000);*/
+        timer.schedule(timerTask, 0, 1000*10);
     }
 
     public void openPreferencesUI(View view) {
@@ -180,24 +177,17 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected Weather doInBackground(String... params) {
-            Weather weather = new Weather();
-          //  String data = ( (new WeatherHttpClient()).getWeatherData(params[0]));
+            String data = ( (new WeatherHttpClient()).getWeatherData(params[0]));
 
             try {
-                //weather = JSONWeatherParser.getWeather(data);
+                Weather weather = JSONWeatherParser.getWeather(data);
 
-                //getImageFromServer(weather.currentCondition.getCondition());
-                getImageFromServer("Snow");
+                getImageFromServer(weather.currentCondition.getCondition());
+                return weather;
 
-                // Let's retrieve the icon
-               // weather.iconData = ( (new WeatherHttpClient()).getImage(weather.currentCondition.getIcon()));
-
-            //} catch (JSONException e) {
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (JSONException e) {
             }
-            return weather;
-
+            return null;
         }
         @Override
         protected void onPostExecute(Weather weather) {
