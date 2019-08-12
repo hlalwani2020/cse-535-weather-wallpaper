@@ -8,6 +8,7 @@ import android.Manifest;
 import android.app.DownloadManager;
 import android.app.PendingIntent;
 import android.app.WallpaperManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -268,6 +269,13 @@ public class MainActivity extends AppCompatActivity {
         request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
         request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, random+".jpg");
 
+        DownloadManager manager = (DownloadManager)getSystemService(Context.DOWNLOAD_SERVICE);
+        manager.enqueue(request);
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         return;
     }
 }
