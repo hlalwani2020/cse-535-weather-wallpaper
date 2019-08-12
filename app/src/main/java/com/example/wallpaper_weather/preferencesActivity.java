@@ -16,5 +16,6 @@ public class preferencesActivity extends AppCompatActivity {
 
     public void applySettings(View view) {
         //startActivity(new Intent(this, MainActivity.class) );
+        finish();
     }
 }
