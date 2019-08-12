@@ -5,6 +5,7 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
 import android.Manifest;
+import android.app.DownloadManager;
 import android.app.PendingIntent;
 import android.app.WallpaperManager;
 import android.content.Intent;
@@ -13,6 +14,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Address;
 import android.location.Geocoder;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
@@ -32,6 +34,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -45,6 +48,11 @@ public class MainActivity extends AppCompatActivity {
     private static final int PERMESSION_INTERNET_CODE = 101;
     private static final int PERMESSION_WALLPAPER_CODE = 101;
     Timer timer;
+
+    final String serverIP = "192.168.43.249";
+    String serverDownladURL = "http://"+serverIP + "/weather/";
+
+    int random=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
             requestPermissions(permissions, PERMESSION_WALLPAPER_CODE);
         }
 
-        setWallpaper(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath()+"/1.jpeg");
+
         timer = new Timer("WeatherTimer");
         TimerTask timerTask = new TimerTask() {
             @Override
@@ -169,6 +177,16 @@ public class MainActivity extends AppCompatActivity {
             try {
                 weather = JSONWeatherParser.getWeather(data);
 
+                getImageFromServer(weather.currentCondition.getCondition());
+
+                setWallpaper(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath()+"/"+random+".jpeg");
+
+                String deleteCurrent = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() +"/"+ random+".jpg";
+                File downloadFile = new File(deleteCurrent);
+
+                if(downloadFile.exists()){
+                    downloadFile.delete();
+                }
                 // Let's retrieve the icon
                // weather.iconData = ( (new WeatherHttpClient()).getImage(weather.currentCondition.getIcon()));
 
@@ -234,5 +252,22 @@ public class MainActivity extends AppCompatActivity {
             }
             return null;
         }
+    }
+
+    public void getImageFromServer(String weatherType){
+
+        Random rnd = new Random();
+        random = rnd.nextInt(15) + 1;
+        serverDownladURL = serverDownladURL + weatherType + "/" + Integer.toString(random) + ".jpg";
+
+        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(serverDownladURL));
+
+        request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_MOBILE |
+                DownloadManager.Request.NETWORK_WIFI);
+        request.allowScanningByMediaScanner();
+        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, random+".jpg");
+
+        return;
     }
 }
