@@ -4,15 +4,18 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
+import android.Manifest;
 import android.app.PendingIntent;
 import android.app.WallpaperManager;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
@@ -24,10 +27,13 @@ import org.json.JSONException;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserFactory;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.List;
 import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity {
     ImageButton androidThumbsUpButton;
@@ -35,6 +41,10 @@ public class MainActivity extends AppCompatActivity {
     ImageButton androidSettingsButton;
     private static int NOTIFICATION_ID_WEATHER_RETRIEVED = 0;
     private static int NOTIFICATION_ID_WALLPAPER_SET = 1;
+    private static final int PERMESSION_STORAGE_CODE = 100;
+    private static final int PERMESSION_INTERNET_CODE = 101;
+    private static final int PERMESSION_WALLPAPER_CODE = 101;
+    Timer timer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,9 +76,37 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        setWallpaper();
-		JSONWeatherTask task = new JSONWeatherTask();
-        task.execute(new String[]{"lat=33.423204&lon=-111.939320"});
+        if(checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED){
+            //permission is denied, request it.
+            String [] permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
+            requestPermissions(permissions, PERMESSION_STORAGE_CODE);
+        }
+        if(checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED){
+            //permission is denied, request it.
+            String [] permissions = {Manifest.permission.READ_EXTERNAL_STORAGE};
+            requestPermissions(permissions, PERMESSION_STORAGE_CODE);
+        }
+        if(checkSelfPermission(Manifest.permission.INTERNET) == PackageManager.PERMISSION_DENIED){
+            //permission is denied, request it.
+            String [] permissions = {Manifest.permission.INTERNET};
+            requestPermissions(permissions, PERMESSION_INTERNET_CODE);
+        }
+        if(checkSelfPermission(Manifest.permission.SET_WALLPAPER) == PackageManager.PERMISSION_DENIED){
+            //permission is denied, request it.
+            String [] permissions = {Manifest.permission.SET_WALLPAPER};
+            requestPermissions(permissions, PERMESSION_WALLPAPER_CODE);
+        }
+
+        setWallpaper(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath()+"/1.jpeg");
+        timer = new Timer("WeatherTimer");
+        TimerTask timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                JSONWeatherTask task = new JSONWeatherTask();
+                task.execute(new String[]{"lat=33.423204&lon=-111.939320"});
+            }
+        };
+        timer.schedule(timerTask, 0, 5000);
     }
 
     public void openPreferencesUI(View view) {
@@ -76,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void setWallpaper() {
+    public void setWallpaper(String imagePath) {
         // Locate ImageView in activity_main.xml
         //ImageView mywallpaper = (ImageView) findViewById(R.id.wallpaper);
 
@@ -89,8 +127,7 @@ public class MainActivity extends AppCompatActivity {
 
         try {
             // Change the current system wallpaper
-            myWallpaperManager.setResource(R.drawable.wallpaper);
-
+            //Bitmap wallpaperbmap = BitmapFactory.decodeFile(imagePath);
             Bitmap wallpaperbmap = BitmapFactory.decodeResource(getResources(), R.drawable.wallpaper);
             myWallpaperManager.setBitmap(wallpaperbmap);
 
@@ -112,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "1")
-                .setSmallIcon(R.drawable.thumb_up)
+                .setSmallIcon(R.drawable.thumbs_up2)
                 .setContentTitle("New Wallpaper Set!")
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setContentIntent(pendingIntent)
@@ -172,7 +209,7 @@ public class MainActivity extends AppCompatActivity {
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             PendingIntent pendingIntent = PendingIntent.getActivity(MainActivity.this, 0, intent, 0);
             NotificationCompat.Builder builder = new NotificationCompat.Builder(MainActivity.this, "1")
-                    .setSmallIcon(R.drawable.thumb_up)
+                    .setSmallIcon(R.drawable.thumbs_up2)
                     .setContentTitle("Weather Retrieved!")
                     .setContentText("Wohoo! Weather is here")
                     .setPriority(NotificationCompat.PRIORITY_DEFAULT)
