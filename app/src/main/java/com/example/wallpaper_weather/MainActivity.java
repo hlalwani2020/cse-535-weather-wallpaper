@@ -19,6 +19,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -49,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
     Timer timer;
 
     final String serverIP = "192.168.43.249";
-    String serverDownladURL = "http://"+serverIP + "/weather/";
+    private final String serverDownladURL = "http://"+serverIP + "/weather/";
 
     int random=0;
 
@@ -282,9 +283,9 @@ public class MainActivity extends AppCompatActivity {
 
         Random rnd = new Random();
         random = rnd.nextInt(15) + 1;
-        serverDownladURL = serverDownladURL + weatherType + "/" + Integer.toString(random) + ".jpg";
+        String downladURL = serverDownladURL + weatherType + "/" + Integer.toString(random) + ".jpg";
 
-        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(serverDownladURL));
+        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(downladURL));
 
         request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_MOBILE |
                 DownloadManager.Request.NETWORK_WIFI);
@@ -294,6 +295,7 @@ public class MainActivity extends AppCompatActivity {
 
         DownloadManager manager = (DownloadManager)getSystemService(Context.DOWNLOAD_SERVICE);
         manager.enqueue(request);
+        Log.e("Image Download", "Getting file "+ downladURL);
         try {
             Thread.sleep(2000);
         } catch (InterruptedException e) {
