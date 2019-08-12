@@ -19,20 +19,15 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONException;
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.StringReader;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
@@ -48,6 +43,9 @@ public class MainActivity extends AppCompatActivity {
     private static final int PERMESSION_STORAGE_CODE = 100;
     private static final int PERMESSION_INTERNET_CODE = 101;
     private static final int PERMESSION_WALLPAPER_CODE = 101;
+    private static final int INTENT_REQUEST_CODE_1 = 1;
+    private int mRefreshRate = 10*1000;
+    private int mZipCode = 85224;
     Timer timer;
 
     final String serverIP = "192.168.43.249";
@@ -114,12 +112,13 @@ public class MainActivity extends AppCompatActivity {
                 task.execute(new String[]{"lat=33.423204&lon=-111.939320"});
             }
         };
-        timer.schedule(timerTask, 0, 1000*10);
+
+        timer.schedule(timerTask, 0, mRefreshRate);
     }
 
     public void openPreferencesUI(View view) {
         Intent intent = new Intent(this, preferencesActivity.class);
-        startActivity(intent);
+        startActivityForResult(intent, INTENT_REQUEST_CODE_1);
     }
 
     public void setWallpaper(String imagePath) {
@@ -171,6 +170,28 @@ public class MainActivity extends AppCompatActivity {
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
         notificationManager.notify(NOTIFICATION_ID_WALLPAPER_SET, builder.build());
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent dataIntent) {
+        super.onActivityResult(requestCode, resultCode, dataIntent);
+
+        // The returned result data is identified by requestCode.
+        // The request code is specified in startActivityForResult(intent, INTENT_REQUEST_CODE_1); method.
+        switch (requestCode)
+        {
+            // This request code is set by startActivityForResult(intent, INTENT_REQUEST_CODE_1) method.
+            case INTENT_REQUEST_CODE_1:
+                if(resultCode == RESULT_OK)
+                {
+                    String strRefreshRate = dataIntent.getStringExtra("REFRESH_RATE");
+                    String strZipCode = dataIntent.getStringExtra("ZIP_CODE");
+                    if(!strRefreshRate.isEmpty())
+                        mRefreshRate = Integer.parseInt(strRefreshRate) * 1000 * 60;
+                    if(!strZipCode.isEmpty())
+                        mZipCode = Integer.parseInt(strZipCode);
+                }
+        }
     }
 
     private class JSONWeatherTask extends AsyncTask<String, Void, Weather> {
