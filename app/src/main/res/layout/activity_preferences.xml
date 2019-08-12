@@ -62,8 +62,7 @@
         android:layout_marginTop="12dp"
         android:ems="10"
         android:hint="@string/editbox_minutes"
-        android:inputType="number"
-        android:numeric="integer"
+        android:inputType="numberDecimal"
         app:layout_constraintStart_toEndOf="@+id/textbox_change_frequence"
         app:layout_constraintTop_toBottomOf="@+id/edtTxtZipCode" />
 
@@ -93,4 +92,5 @@
         app:layout_constraintHorizontal_bias="0.501"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textbox_change_frequence" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

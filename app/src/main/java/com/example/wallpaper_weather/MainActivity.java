@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int PERMESSION_INTERNET_CODE = 101;
     private static final int PERMESSION_WALLPAPER_CODE = 101;
     private static final int INTENT_REQUEST_CODE_1 = 1;
-    private int mRefreshRate = 10*1000;
+    private long mRefreshRate = 10*1000;
     private int mZipCode = 85224;
     Timer timer;
 
@@ -113,7 +113,6 @@ public class MainActivity extends AppCompatActivity {
                 task.execute(new String[]{"lat=33.423204&lon=-111.939320"});
             }
         };
-
         timer.schedule(timerTask, 0, mRefreshRate);
     }
 
@@ -187,8 +186,23 @@ public class MainActivity extends AppCompatActivity {
                 {
                     String strRefreshRate = dataIntent.getStringExtra("REFRESH_RATE");
                     String strZipCode = dataIntent.getStringExtra("ZIP_CODE");
-                    if(!strRefreshRate.isEmpty())
-                        mRefreshRate = Integer.parseInt(strRefreshRate) * 1000 * 60;
+                    if(!strRefreshRate.isEmpty()) {
+                        try {
+                            mRefreshRate = (long) (Double.parseDouble(strRefreshRate) * 1000 * 60);
+                            timer.cancel();
+                            timer = new Timer("WeatherTimer");
+                            TimerTask timerTask = new TimerTask() {
+                                @Override
+                                public void run() {
+                                    JSONWeatherTask task = new JSONWeatherTask();
+                                    task.execute(new String[]{"lat=33.423204&lon=-111.939320"});
+                                }
+                            };
+                            timer.schedule(timerTask, 1000, mRefreshRate);
+                        } catch (Exception e) {
+                            Log.e("preference", e.getMessage());
+                        }
+                    }
                     if(!strZipCode.isEmpty())
                         mZipCode = Integer.parseInt(strZipCode);
                 }
