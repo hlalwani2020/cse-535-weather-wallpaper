@@ -106,8 +106,10 @@ public class MainActivity extends AppCompatActivity {
             requestPermissions(permissions, PERMESSION_WALLPAPER_CODE);
         }
 
+        JSONWeatherTask task = new JSONWeatherTask();
+        task.execute(new String[]{"lat=33.423204&lon=-111.939320"});
 
-        timer = new Timer("WeatherTimer");
+        /*timer = new Timer("WeatherTimer");
         TimerTask timerTask = new TimerTask() {
             @Override
             public void run() {
@@ -115,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
                 task.execute(new String[]{"lat=33.423204&lon=-111.939320"});
             }
         };
-        timer.schedule(timerTask, 0, 5000);
+        timer.schedule(timerTask, 0, 5000);*/
     }
 
     public void openPreferencesUI(View view) {
@@ -136,8 +138,14 @@ public class MainActivity extends AppCompatActivity {
 
         try {
             // Change the current system wallpaper
-            //Bitmap wallpaperbmap = BitmapFactory.decodeFile(imagePath);
-            Bitmap wallpaperbmap = BitmapFactory.decodeResource(getResources(), R.drawable.wallpaper);
+            Bitmap wallpaperbmap = BitmapFactory.decodeFile(imagePath);
+            if(wallpaperbmap == null) {
+                Toast.makeText(MainActivity.this,
+                        "Wallpaper not found", Toast.LENGTH_SHORT)
+                        .show();
+                return;
+            }
+            //Bitmap wallpaperbmap = BitmapFactory.decodeResource(getResources(), R.drawable.wallpaper);
             myWallpaperManager.setBitmap(wallpaperbmap);
 
             // Show a toast message on successful change
@@ -173,25 +181,19 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected Weather doInBackground(String... params) {
             Weather weather = new Weather();
-            String data = ( (new WeatherHttpClient()).getWeatherData(params[0]));
+          //  String data = ( (new WeatherHttpClient()).getWeatherData(params[0]));
 
             try {
-                weather = JSONWeatherParser.getWeather(data);
+                //weather = JSONWeatherParser.getWeather(data);
 
-                getImageFromServer(weather.currentCondition.getCondition());
+                //getImageFromServer(weather.currentCondition.getCondition());
+                getImageFromServer("Snow");
 
-                setWallpaper(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath()+"/"+random+".jpeg");
-
-                String deleteCurrent = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() +"/"+ random+".jpg";
-                File downloadFile = new File(deleteCurrent);
-
-                if(downloadFile.exists()){
-                    downloadFile.delete();
-                }
                 // Let's retrieve the icon
                // weather.iconData = ( (new WeatherHttpClient()).getImage(weather.currentCondition.getIcon()));
 
-            } catch (JSONException e) {
+            //} catch (JSONException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             return weather;
@@ -200,27 +202,37 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Weather weather) {
             super.onPostExecute(weather);
-            ((TextView) findViewById(R.id.tempTxtView)).setText("" + Math.round(((weather.temperature.getTemp() - 273.15)*9/5)+32) + "°F");
+            setWallpaper(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath()+"/"+random+".jpg");
+
+            String deleteCurrent = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() +"/"+ random+".jpg";
+            File downloadFile = new File(deleteCurrent);
+
+            if(downloadFile.exists()){
+                downloadFile.delete();
+            }
+
 /*            if (weather.iconData != null && weather.iconData.length > 0) {
                 Bitmap img = BitmapFactory.decodeByteArray(weather.iconData, 0, weather.iconData.length);
                 imgView.setImageBitmap(img);
             }*/
-
-            ((TextView) findViewById(R.id.cityTxtView)).setText(weather.location.getCity() + "," + weather.location.getCountry());
-            Address address = getAddressFromLocation(weather.location.getLatitude(), weather.location.getLongitude());
-            if (address != null)
-                ((TextView) findViewById(R.id.stateTxtView)).setText(address.getAdminArea());
-            else
-                ((TextView) findViewById(R.id.stateTxtView)).setText("Unidentified");
-            ((TextView) findViewById(R.id.longTxtView)).setText("" + weather.location.getLongitude() + "°");
-            ((TextView) findViewById(R.id.latTxtView)).setText("" + weather.location.getLatitude() + "°");
-            ((TextView) findViewById(R.id.condTxtView)).setText(weather.currentCondition.getCondition() + "(" + weather.currentCondition.getDescr() + ")");
-            ((TextView) findViewById(R.id.humidTxtView)).setText("" + weather.currentCondition.getHumidity() + "%");
-            //((TextView) findViewById(R.id.pressTxtView)).setText("" + weather.currentCondition.getPressure() + " hPa");
-            //((TextView) findViewById(R.id.windSpdTxtView)).setText("" + weather.wind.getSpeed() + " mps");
-            //((TextView) findViewById(R.id.windDegTxtView)).setText("" + weather.wind.getDeg() + "°");
-            //((TextView) findViewById(R.id.rainTxtView)).setText("" + weather.rain.getTime() + " " + weather.rain.getAmmount());
-            showWeatherNotification();
+            if(weather.location != null) {
+                ((TextView) findViewById(R.id.tempTxtView)).setText("" + Math.round(((weather.temperature.getTemp() - 273.15)*9/5)+32) + "°F");
+                ((TextView) findViewById(R.id.cityTxtView)).setText(weather.location.getCity() + "," + weather.location.getCountry());
+                Address address = getAddressFromLocation(weather.location.getLatitude(), weather.location.getLongitude());
+                if (address != null)
+                    ((TextView) findViewById(R.id.stateTxtView)).setText(address.getAdminArea());
+                else
+                    ((TextView) findViewById(R.id.stateTxtView)).setText("Unidentified");
+                ((TextView) findViewById(R.id.longTxtView)).setText("" + weather.location.getLongitude() + "°");
+                ((TextView) findViewById(R.id.latTxtView)).setText("" + weather.location.getLatitude() + "°");
+                ((TextView) findViewById(R.id.condTxtView)).setText(weather.currentCondition.getCondition() + "(" + weather.currentCondition.getDescr() + ")");
+                ((TextView) findViewById(R.id.humidTxtView)).setText("" + weather.currentCondition.getHumidity() + "%");
+                //((TextView) findViewById(R.id.pressTxtView)).setText("" + weather.currentCondition.getPressure() + " hPa");
+                //((TextView) findViewById(R.id.windSpdTxtView)).setText("" + weather.wind.getSpeed() + " mps");
+                //((TextView) findViewById(R.id.windDegTxtView)).setText("" + weather.wind.getDeg() + "°");
+                //((TextView) findViewById(R.id.rainTxtView)).setText("" + weather.rain.getTime() + " " + weather.rain.getAmmount());
+                showWeatherNotification();
+            }
         }
 
         private void showWeatherNotification() {
