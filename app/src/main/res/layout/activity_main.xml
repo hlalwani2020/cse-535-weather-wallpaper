@@ -135,7 +135,7 @@
         android:layout_width="35dp"
         android:layout_height="35dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="36dp"
         android:background="@null"
         android:scaleType="fitXY"
         android:src="@drawable/thumbs_up2"
@@ -148,19 +148,20 @@
         android:layout_width="35dp"
         android:layout_height="35dp"
         android:layout_marginStart="8dp"
+        android:layout_marginTop="36dp"
         android:background="@null"
         android:scaleType="fitXY"
         android:src="@drawable/thumbs_down2"
         app:layout_constraintStart_toEndOf="@+id/image_button_thumbsup"
-        app:srcCompat="@drawable/thumbs_down2"
-        tools:layout_editor_absoluteY="20dp" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/thumbs_down2" />
 
     <ImageButton
         android:id="@+id/image_button_settings"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="28dp"
+        android:layout_marginBottom="36dp"
         android:background="@null"
         android:scaleType="fitXY"
         android:src="@drawable/settings4"
