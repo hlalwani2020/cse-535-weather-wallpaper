@@ -63,10 +63,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         LocationManager locationManger = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         @SuppressLint("MissingPermission") Location location = locationManger.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
         latc = String.valueOf(location.getLatitude());
         lonc = String.valueOf(location.getLongitude());
+
         androidThumbsUpButton = (ImageButton)findViewById(R.id.image_button_thumbsup);
         androidThumbsUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
