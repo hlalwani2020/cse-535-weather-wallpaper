@@ -1,5 +1,6 @@
 package com.example.wallpaper_weather;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -50,25 +51,30 @@ public class MainActivity extends AppCompatActivity {
     private static final int INTENT_REQUEST_CODE_1 = 1;
     public String lonc;
     public String latc;
-    private long mRefreshRate = 10*1000;
+    private long mRefreshRate = 10 * 1000;
     private int mZipCode = 85224;
     Timer timer;
 
     final String serverIP = "192.168.43.249";
-    private final String serverDownladURL = "http://"+serverIP + "/weather/";
+    private final String serverDownladURL = "http://" + serverIP + "/weather/";
 
-    int random=0;
+    int random = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        LocationManager locationManger = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        @SuppressLint("MissingPermission") Location location = locationManger.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-        latc = String.valueOf(location.getLatitude());
-        lonc = String.valueOf(location.getLongitude());
 
+        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},1000);
+        }
+        else {
+            LocationManager locationManger = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            Location location = locationManger.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+            latc = String.valueOf(location.getLatitude());
+            lonc = String.valueOf(location.getLongitude());
+        }
         androidThumbsUpButton = (ImageButton)findViewById(R.id.image_button_thumbsup);
         androidThumbsUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -126,6 +132,26 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         timer.schedule(timerTask, 0, mRefreshRate);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+
+        switch (requestCode){
+            case 1000:{
+                if(grantResults[0]== PackageManager.PERMISSION_GRANTED){
+                    LocationManager locationManger = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+                    @SuppressLint("MissingPermission") Location location = locationManger.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                    latc = String.valueOf(location.getLatitude());
+                    lonc = String.valueOf(location.getLongitude());
+                }
+                else{
+                    Toast.makeText(this, "Location permission Required!!",Toast.LENGTH_SHORT).show();
+                }
+                break;
+            }
+
+        }
     }
 
     public void openPreferencesUI(View view) {
