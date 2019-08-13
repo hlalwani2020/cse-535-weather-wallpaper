@@ -5,6 +5,7 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.DownloadManager;
 import android.app.PendingIntent;
 import android.app.WallpaperManager;
@@ -15,6 +16,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Address;
 import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -45,6 +48,8 @@ public class MainActivity extends AppCompatActivity {
     private static final int PERMESSION_INTERNET_CODE = 101;
     private static final int PERMESSION_WALLPAPER_CODE = 101;
     private static final int INTENT_REQUEST_CODE_1 = 1;
+    public String lonc;
+    public String latc;
     private long mRefreshRate = 10*1000;
     private int mZipCode = 85224;
     Timer timer;
@@ -58,7 +63,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        LocationManager locationManger = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        @SuppressLint("MissingPermission") Location location = locationManger.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+        latc = String.valueOf(location.getLatitude());
+        lonc = String.valueOf(location.getLongitude());
         androidThumbsUpButton = (ImageButton)findViewById(R.id.image_button_thumbsup);
         androidThumbsUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -109,8 +117,10 @@ public class MainActivity extends AppCompatActivity {
         TimerTask timerTask = new TimerTask() {
             @Override
             public void run() {
+                LocationManager locationManger = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+                @SuppressLint("MissingPermission") Location location = locationManger.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
                 JSONWeatherTask task = new JSONWeatherTask();
-                task.execute(new String[]{"lat=33.423204&lon=-111.939320"});
+                task.execute(new String[]{"lat="+latc+"&lon="+lonc});
             }
         };
         timer.schedule(timerTask, 0, mRefreshRate);
@@ -195,7 +205,7 @@ public class MainActivity extends AppCompatActivity {
                                 @Override
                                 public void run() {
                                     JSONWeatherTask task = new JSONWeatherTask();
-                                    task.execute(new String[]{"lat=33.423204&lon=-111.939320"});
+                                    task.execute(new String[]{"lat="+latc+"&lon=-"+lonc});
                                 }
                             };
                             timer.schedule(timerTask, 1000, mRefreshRate);
