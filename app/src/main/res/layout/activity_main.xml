@@ -4,15 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/ar6"
     tools:context=".MainActivity">
 
-    <ImageView
-        android:id="@+id/iv_wallpaper"
+    <!--ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
-        android:src="@color/colorPrimary" />
-
+        android:src="@drawable/ar3"/-->
     <TextView
         android:id="@+id/cityTxtView"
         android:layout_width="200dp"

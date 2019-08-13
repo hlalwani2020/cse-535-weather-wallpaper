@@ -9,17 +9,7 @@
     <string name="weather_condition_textbox">Condition</string>
     <string name="minute_textbox">minutes.</string>
     <string name="editbox_zipcode">85281</string>
-    <string name="editbox_minutes">Refresh rate e.g.30</string>
+    <string name="editbox_minutes">30</string>
     <string name="apply_Settings">Apply</string>
     <string name="text_edit_date">July 24, 2019</string>
-
-    <string name="permission_location_rationale">We are requesting location permission to get your current location and set the wallpaper as per the current weather in your area.</string>
-    <string name="button_allow">Allow</string>
-    <string name="button_deny">Deny</string>
-    <string name="permission_location_neverask"><![CDATA[Please got to Settings -> Apps -> WeatherWallpaper -> Permissions and enable the location permission.]]></string>
-
-    <string name="refresh_rate_updated_successfully">Refresh rate updated!!</string>
-    <string name="invalid_refresh_rate">Invalid refresh rate.</string>
-    <string name="zip_code_updated_successfully">Zip code updated!!</string>
-    <string name="invalid_zip_code">Invalid Zip code</string>
 </resources>
