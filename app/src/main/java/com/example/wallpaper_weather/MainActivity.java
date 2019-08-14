@@ -54,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
     private long mRefreshRate = 10 * 1000;
     private int mZipCode = 85224;
     Timer timer;
+    Weather weather;
 
     final String serverIP = "192.168.43.249";
     private final String serverDownladURL = "http://" + serverIP + "/weather/";
@@ -83,12 +84,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        androidThumbsDownButton = (ImageButton)findViewById(R.id.image_button_thumbsdown);
+        androidThumbsDownButton = (ImageButton)findViewById(R.id.dislike_button);
         androidThumbsDownButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v2) {
-
+            public void onClick(View v) {
+                getImageFromServer(weather.currentCondition.getCondition());
+                setWallpaper(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath()+"/"+random+".jpg");
             }
+
         });
         androidSettingsButton = (ImageButton)findViewById(R.id.image_button_settings);
         androidSettingsButton.setOnClickListener(new View.OnClickListener() {
@@ -254,7 +257,7 @@ public class MainActivity extends AppCompatActivity {
             String data = ( (new WeatherHttpClient()).getWeatherData(params[0]));
 
             try {
-                Weather weather = JSONWeatherParser.getWeather(data);
+                weather = JSONWeatherParser.getWeather(data);
 
                 getImageFromServer(weather.currentCondition.getCondition());
                 return weather;

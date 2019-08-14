@@ -145,7 +145,7 @@
         app:srcCompat="@drawable/thumbs_up2" />
 
     <ImageButton
-        android:id="@+id/image_button_thumbsdown"
+        android:id="@+id/dislike_button"
         android:layout_width="35dp"
         android:layout_height="35dp"
         android:layout_marginStart="8dp"
@@ -159,9 +159,9 @@
 
     <ImageButton
         android:id="@+id/image_button_settings"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginEnd="28dp"
+        android:layout_width="68dp"
+        android:layout_height="69dp"
+        android:layout_marginEnd="24dp"
         android:layout_marginBottom="36dp"
         android:background="@null"
         android:scaleType="fitXY"
