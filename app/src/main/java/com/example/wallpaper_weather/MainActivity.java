@@ -135,18 +135,8 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION},
                     REQUEST_CODE_LOCATION_PERMISSION);
         } else {
-            scheduleFetchLocationTimerTask(0);
+            fetchLocation();
         }
-    }
-
-    private void scheduleFetchLocationTimerTask(long delay) {
-        TimerTask timerTask = new TimerTask() {
-            @Override
-            public void run() {
-                fetchLocation();
-            }
-        };
-        timer.schedule(timerTask, delay, mRefreshRate);
     }
 
     @SuppressLint("MissingPermission")
@@ -177,7 +167,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                         LocationManager.NETWORK_PROVIDER,
                         MIN_TIME_BW_UPDATES,
                         MIN_DISTANCE_CHANGE_FOR_UPDATES, MainActivity.this);
-                Log.d(TAG, "Network");
+                Log.d(TAG, "isNetworkEnabled");
                 location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
                 if (location != null) {
                     updateLocationAndWallpaper(location);
@@ -191,12 +181,19 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                             LocationManager.GPS_PROVIDER,
                             MIN_TIME_BW_UPDATES,
                             MIN_DISTANCE_CHANGE_FOR_UPDATES, MainActivity.this);
-                    Log.d("GPS Enabled", "GPS Enabled");
+                    Log.d(TAG, "GPS Enabled");
                     location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
                     if (location != null) {
                         updateLocationAndWallpaper(location);
                     }
                 }
+            }
+
+            if (location == null) {
+                Log.d(TAG, "location is still null");
+                Toast.makeText(MainActivity.this,
+                        "Location is still null. Will be handled when onLocationchange is called",
+                        Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -204,8 +201,9 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     private void updateLocationAndWallpaper(@NonNull Location location) {
         latc = String.valueOf(location.getLatitude());
         lonc = String.valueOf(location.getLongitude());
+        Log.i(TAG, "lat: " + latc + ", lon: " + lonc);
         JSONWeatherTask task = new JSONWeatherTask();
-        task.execute("lat=" + latc + "&lon=-" + lonc);
+        task.execute("lat=" + latc + "&lon=" + lonc);
     }
 
     @Override
@@ -291,7 +289,13 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                         mRefreshRate = (long) (Double.parseDouble(strRefreshRate) * 1000 * 60);
                         timer.cancel();
                         timer = new Timer("WeatherTimer");
-                        scheduleFetchLocationTimerTask(1000);
+                        TimerTask timerTask = new TimerTask() {
+                            @Override
+                            public void run() {
+
+                            }
+                        };
+                        timer.schedule(timerTask, 1000, mRefreshRate);
                     } catch (Exception e) {
                         Log.e("preference", e.getMessage());
                     }
@@ -335,6 +339,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                 return weather;
 
             } catch (JSONException e) {
+                e.printStackTrace();
             }
             return null;
         }
