@@ -18,6 +18,7 @@ import android.graphics.BitmapFactory;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -40,6 +41,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity {
+
+
     ImageButton androidThumbsUpButton;
     ImageButton androidThumbsDownButton;
     ImageButton androidSettingsButton;
@@ -47,14 +50,17 @@ public class MainActivity extends AppCompatActivity {
     private static int NOTIFICATION_ID_WALLPAPER_SET = 1;
     private static final int PERMESSION_STORAGE_CODE = 100;
     private static final int PERMESSION_INTERNET_CODE = 101;
-    private static final int PERMESSION_WALLPAPER_CODE = 101;
+    private static final int PERMESSION_WALLPAPER_CODE = 102;
     private static final int INTENT_REQUEST_CODE_1 = 1;
     public String lonc;
     public String latc;
     private long mRefreshRate = 10 * 1000;
-    private int mZipCode = 85224;
+    private int mZipCode = 85281;
     Timer timer;
     Weather weather;
+    LocationManager lm;
+    boolean gps_enabled = false;
+    boolean network_enabled = false;
 
     final String serverIP = "192.168.43.249";
     private final String serverDownladURL = "http://" + serverIP + "/weather/";
@@ -67,16 +73,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
 
-        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},1000);
-        }
-        else {
-            LocationManager locationManger = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-            Location location = locationManger.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-            latc = String.valueOf(location.getLatitude());
-            lonc = String.valueOf(location.getLongitude());
-        }
-        androidThumbsUpButton = (ImageButton)findViewById(R.id.image_button_thumbsup);
+        androidThumbsUpButton = (ImageButton) findViewById(R.id.image_button_thumbsup);
         androidThumbsUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v1) {
@@ -84,16 +81,17 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        androidThumbsDownButton = (ImageButton)findViewById(R.id.dislike_button);
+        androidThumbsDownButton = (ImageButton) findViewById(R.id.dislike_button);
         androidThumbsDownButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getImageFromServer(weather.currentCondition.getCondition());
-                setWallpaper(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath()+"/"+random+".jpg");
+                setWallpaper(Environment.getExternalStoragePublicDirectory(
+                        Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + "/" + random + ".jpg");
             }
 
         });
-        androidSettingsButton = (ImageButton)findViewById(R.id.image_button_settings);
+        androidSettingsButton = (ImageButton) findViewById(R.id.image_button_settings);
         androidSettingsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v3) {
@@ -103,35 +101,61 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        if(checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED){
+        if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
             //permission is denied, request it.
-            String [] permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
+            String[] permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
             requestPermissions(permissions, PERMESSION_STORAGE_CODE);
         }
-        if(checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED){
+        if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
             //permission is denied, request it.
-            String [] permissions = {Manifest.permission.READ_EXTERNAL_STORAGE};
+            String[] permissions = {Manifest.permission.READ_EXTERNAL_STORAGE};
             requestPermissions(permissions, PERMESSION_STORAGE_CODE);
         }
-        if(checkSelfPermission(Manifest.permission.INTERNET) == PackageManager.PERMISSION_DENIED){
+        if (checkSelfPermission(Manifest.permission.INTERNET) == PackageManager.PERMISSION_DENIED) {
             //permission is denied, request it.
-            String [] permissions = {Manifest.permission.INTERNET};
+            String[] permissions = {Manifest.permission.INTERNET};
             requestPermissions(permissions, PERMESSION_INTERNET_CODE);
         }
-        if(checkSelfPermission(Manifest.permission.SET_WALLPAPER) == PackageManager.PERMISSION_DENIED){
+        if (checkSelfPermission(Manifest.permission.SET_WALLPAPER) == PackageManager.PERMISSION_DENIED) {
             //permission is denied, request it.
-            String [] permissions = {Manifest.permission.SET_WALLPAPER};
+            String[] permissions = {Manifest.permission.SET_WALLPAPER};
             requestPermissions(permissions, PERMESSION_WALLPAPER_CODE);
         }
+
 
         timer = new Timer("WeatherTimer");
         TimerTask timerTask = new TimerTask() {
             @Override
             public void run() {
-                LocationManager locationManger = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-                @SuppressLint("MissingPermission") Location location = locationManger.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                if (checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, 1000);
+                } else {
+                    LocationManager locationManger = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+//            try {
+//
+//                gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+//            } catch (Exception ex) {
+//            }
+//            try {
+//                network_enabled = lm
+//                        .isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+//            } catch (Exception ex) {
+//            }
+//
+//            if (!gps_enabled && !network_enabled)
+//                Toast.makeText(this, "GPS/Network Permission Required.", Toast.LENGTH_SHORT).show();
+//
+//            if (gps_enabled)
+//                lm.requestLocationUpdate(LocationManager.NETWORK_PROVIDER,0,0);
+//            if (network_enabled)
+//                lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0,
+//                        LocationListener listener);
+                    Location location = locationManger.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                    latc = String.valueOf(location.getLatitude());
+                    lonc = String.valueOf(location.getLongitude());
+                }
                 JSONWeatherTask task = new JSONWeatherTask();
-                task.execute(new String[]{"lat="+latc+"&lon="+lonc});
+                task.execute(new String[]{"lat=" + latc + "&lon=" + lonc});
             }
         };
         timer.schedule(timerTask, 0, mRefreshRate);
@@ -140,16 +164,15 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
 
-        switch (requestCode){
-            case 1000:{
-                if(grantResults[0]== PackageManager.PERMISSION_GRANTED){
+        switch (requestCode) {
+            case 1000: {
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     LocationManager locationManger = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
                     @SuppressLint("MissingPermission") Location location = locationManger.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
                     latc = String.valueOf(location.getLatitude());
                     lonc = String.valueOf(location.getLongitude());
-                }
-                else{
-                    Toast.makeText(this, "Location permission Required!!",Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(this, "Location permission Required!!", Toast.LENGTH_SHORT).show();
                 }
                 break;
             }
@@ -176,7 +199,7 @@ public class MainActivity extends AppCompatActivity {
         try {
             // Change the current system wallpaper
             Bitmap wallpaperbmap = BitmapFactory.decodeFile(imagePath);
-            if(wallpaperbmap == null) {
+            if (wallpaperbmap == null) {
                 Toast.makeText(MainActivity.this,
                         "Wallpaper not found", Toast.LENGTH_SHORT)
                         .show();
@@ -207,7 +230,8 @@ public class MainActivity extends AppCompatActivity {
                 .setContentTitle("New Wallpaper Set!")
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setContentIntent(pendingIntent)
-                .setAutoCancel(true);;
+                .setAutoCancel(true);
+        ;
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
         notificationManager.notify(NOTIFICATION_ID_WALLPAPER_SET, builder.build());
@@ -219,15 +243,13 @@ public class MainActivity extends AppCompatActivity {
 
         // The returned result data is identified by requestCode.
         // The request code is specified in startActivityForResult(intent, INTENT_REQUEST_CODE_1); method.
-        switch (requestCode)
-        {
+        switch (requestCode) {
             // This request code is set by startActivityForResult(intent, INTENT_REQUEST_CODE_1) method.
             case INTENT_REQUEST_CODE_1:
-                if(resultCode == RESULT_OK)
-                {
+                if (resultCode == RESULT_OK) {
                     String strRefreshRate = dataIntent.getStringExtra("REFRESH_RATE");
                     String strZipCode = dataIntent.getStringExtra("ZIP_CODE");
-                    if(!strRefreshRate.isEmpty()) {
+                    if (!strRefreshRate.isEmpty()) {
                         try {
                             mRefreshRate = (long) (Double.parseDouble(strRefreshRate) * 1000 * 60);
                             timer.cancel();
@@ -236,7 +258,7 @@ public class MainActivity extends AppCompatActivity {
                                 @Override
                                 public void run() {
                                     JSONWeatherTask task = new JSONWeatherTask();
-                                    task.execute(new String[]{"lat="+latc+"&lon=-"+lonc});
+                                    task.execute(new String[]{"lat=" + latc + "&lon=-" + lonc});
                                 }
                             };
                             timer.schedule(timerTask, 1000, mRefreshRate);
@@ -244,7 +266,7 @@ public class MainActivity extends AppCompatActivity {
                             Log.e("preference", e.getMessage());
                         }
                     }
-                    if(!strZipCode.isEmpty())
+                    if (!strZipCode.isEmpty())
                         mZipCode = Integer.parseInt(strZipCode);
                 }
         }
@@ -254,7 +276,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected Weather doInBackground(String... params) {
-            String data = ( (new WeatherHttpClient()).getWeatherData(params[0]));
+            String data = ((new WeatherHttpClient()).getWeatherData(params[0]));
 
             try {
                 weather = JSONWeatherParser.getWeather(data);
@@ -266,15 +288,16 @@ public class MainActivity extends AppCompatActivity {
             }
             return null;
         }
+
         @Override
         protected void onPostExecute(Weather weather) {
             super.onPostExecute(weather);
-            setWallpaper(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath()+"/"+random+".jpg");
+            setWallpaper(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + "/" + random + ".jpg");
 
-            String deleteCurrent = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() +"/"+ random+".jpg";
+            String deleteCurrent = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + "/" + random + ".jpg";
             File downloadFile = new File(deleteCurrent);
 
-            if(downloadFile.exists()){
+            if (downloadFile.exists()) {
                 downloadFile.delete();
             }
 
@@ -282,8 +305,8 @@ public class MainActivity extends AppCompatActivity {
                 Bitmap img = BitmapFactory.decodeByteArray(weather.iconData, 0, weather.iconData.length);
                 imgView.setImageBitmap(img);
             }*/
-            if(weather.location != null) {
-                ((TextView) findViewById(R.id.tempTxtView)).setText("" + Math.round(((weather.temperature.getTemp() - 273.15)*9/5)+32) + "°F");
+            if (weather.location != null) {
+                ((TextView) findViewById(R.id.tempTxtView)).setText("" + Math.round(((weather.temperature.getTemp() - 273.15) * 9 / 5) + 32) + "°F");
                 ((TextView) findViewById(R.id.cityTxtView)).setText(weather.location.getCity() + "," + weather.location.getCountry());
                 Address address = getAddressFromLocation(weather.location.getLatitude(), weather.location.getLongitude());
                 if (address != null)
@@ -312,7 +335,8 @@ public class MainActivity extends AppCompatActivity {
                     .setContentText("Wohoo! Weather is here")
                     .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                     .setContentIntent(pendingIntent)
-                    .setAutoCancel(true);;
+                    .setAutoCancel(true);
+            ;
 
             NotificationManagerCompat notificationManager = NotificationManagerCompat.from(MainActivity.this);
 
@@ -334,7 +358,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void getImageFromServer(String weatherType){
+    public void getImageFromServer(String weatherType) {
 
         Random rnd = new Random();
         random = rnd.nextInt(15) + 1;
@@ -346,11 +370,11 @@ public class MainActivity extends AppCompatActivity {
                 DownloadManager.Request.NETWORK_WIFI);
         request.allowScanningByMediaScanner();
         request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, random+".jpg");
+        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, random + ".jpg");
 
-        DownloadManager manager = (DownloadManager)getSystemService(Context.DOWNLOAD_SERVICE);
+        DownloadManager manager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
         manager.enqueue(request);
-        Log.e("Image Download", "Getting file "+ downladURL);
+        Log.e("Image Download", "Getting file " + downladURL);
         try {
             Thread.sleep(2000);
         } catch (InterruptedException e) {
@@ -358,4 +382,24 @@ public class MainActivity extends AppCompatActivity {
         }
         return;
     }
+    LocationListener locationListenerGps = new LocationListener() {
+        @Override
+        public void onLocationChanged(Location location) {
+            locationResult.gotLocation(location);
+            lm.removeUpdates(this);
+            lm.removeUpdates(locationListenerNetwork);
+        }
+
+        @Override
+        public void onProviderDisabled(String provider) {
+        }
+
+        @Override
+        public void onProviderEnabled(String provider) {
+        }
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+        }
+
 }
