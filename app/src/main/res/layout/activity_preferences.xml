@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/ar6"
+    android:background="@drawable/wallpaper"
     tools:context=".preferencesActivity">
     <!--ImageView
         android:layout_width="match_parent"
@@ -40,7 +40,7 @@
         app:layout_constraintTop_toBottomOf="@+id/textbox_change_zipcode" />
 
     <EditText
-        android:id="@+id/editText"
+        android:id="@+id/edtTxtZipCode"
         android:layout_width="136dp"
         android:layout_height="39dp"
         android:layout_marginStart="8dp"
@@ -55,17 +55,16 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/editText2"
+        android:id="@+id/edtTxtRefreshRate"
         android:layout_width="49dp"
         android:layout_height="39dp"
         android:layout_marginStart="12dp"
         android:layout_marginTop="12dp"
         android:ems="10"
         android:hint="@string/editbox_minutes"
-        android:inputType="number"
-        android:numeric="integer"
+        android:inputType="numberDecimal"
         app:layout_constraintStart_toEndOf="@+id/textbox_change_frequence"
-        app:layout_constraintTop_toBottomOf="@+id/editText" />
+        app:layout_constraintTop_toBottomOf="@+id/edtTxtZipCode" />
 
     <TextView
         android:id="@+id/minute_textbox"
@@ -77,8 +76,8 @@
         android:text="@string/minute_textbox"
         android:textColor="@android:color/white"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/editText2"
-        app:layout_constraintTop_toBottomOf="@+id/editText" />
+        app:layout_constraintStart_toEndOf="@+id/edtTxtRefreshRate"
+        app:layout_constraintTop_toBottomOf="@+id/edtTxtZipCode" />
 
     <Button
         android:id="@+id/button"
@@ -93,4 +92,5 @@
         app:layout_constraintHorizontal_bias="0.501"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textbox_change_frequence" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
